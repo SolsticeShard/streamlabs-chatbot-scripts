@@ -1,0 +1,24 @@
+{
+    "output_file": "Settings/settings.json",
+    "MinimumBet": {
+      "type": "numberbox",
+      "label": "Minimum bet",
+      "value": 5,
+      "tooltip": "Minimum bet to join a game",
+      "group": "Core"
+    },
+    "MaximumBet": {
+      "type": "numberbox",
+      "label": "Maximum bet",
+      "value": 50,
+      "tooltip": "Maximum bet to join a game",
+      "group": "Core"
+    },
+    "MaximumPlayers": {
+      "type": "numberbox",
+      "label": "Maximum players",
+      "value": 5,
+      "tooltip": "Maximum players that can participate in a game",
+      "group": "Core"
+    }
+  }
