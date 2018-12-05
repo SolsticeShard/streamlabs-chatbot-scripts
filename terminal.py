@@ -6,6 +6,20 @@ import importlib
 import importlib.util
 from time import sleep
 
+
+'''
+This is a rudimentary terminal to simulate Twitch chat for the purposes of testing out Streamlabs chatbot scripts. It's a work in progress! To use, drop this file at the root of your scripts directory.
+
+Type !cu to change your active user
+Type !setpoints (user) (value) to set a user's points.
+Type /w (message) to simulate sending a whisper to the bot
+Type !import to load a named module from the terminal's directory
+Type !quit to quit
+'''
+
+'''
+This class simulates the Parent class available in chatbot scripts, effectively overloading the methods to work within the terminal.
+'''
 class Parent:
     Points = {}
 
@@ -52,7 +66,9 @@ class Parent:
         else:
             return self.Points[user]
 
-
+'''
+This class simulates the Data object passed into the script.
+'''
 class Data(object):
     User = ""
     Message = ""
@@ -71,7 +87,7 @@ class Data(object):
         return not self.Whisper
 
     def IsRawData(self):
-        #TODO uh what this do?
+        #TODO Not sure what this is for.
         return True
 
     def IsFromTwitch(self):
