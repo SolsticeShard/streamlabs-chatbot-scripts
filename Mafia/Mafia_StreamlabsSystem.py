@@ -21,8 +21,8 @@ from Settings_Module import MySettings
 #   [Required] Script Information
 #---------------------------
 ScriptName = "mafia"
-Website = "www.twitch.tv/solsticeshard"
-Description = ""
+Website = "www.github.com/solsticeshard"
+Description = "A rudimentary implementation of the mafia social game."
 Creator = "SolsticeShard"
 Version = "1.0.0.0"
 
@@ -329,6 +329,8 @@ def StartGame():
     i = 0
     mafiaMembers = []
 
+
+    #TODO BUG: This can currently flag the bot as spamming. Unfortunately it seems that all of these messages are put into a buffer and sent out at once, so the sleeps don't seem to help.
     Players = {}
     for player in PlayerQueue:
         if i == 0:
