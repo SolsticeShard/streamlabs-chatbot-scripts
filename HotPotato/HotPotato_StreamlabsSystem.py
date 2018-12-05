@@ -17,8 +17,8 @@ from Settings_Module import MySettings
 #   [Required] Script Information
 #---------------------------
 ScriptName = "hotpotato"
-Website = "www.google.com"
-Description = "woop"
+Website = "www.github.com/solsticeshard"
+Description = "simple chatbot implementation of a hot potato game. Active viewers take turns throwing a potato back and forth with a decreasing timer until it is dropped."
 Creator = "SolsticeShard"
 Version = "1.0.0.0"
 
@@ -61,7 +61,6 @@ def Init():
     #   Load settings
     SettingsFile = os.path.join(os.path.dirname(__file__), "Settings\settings.json")
     ScriptSettings = MySettings(SettingsFile)
-    ScriptSettings.Command = "!hotpotato"
     
     return
 
@@ -76,18 +75,14 @@ def Execute(data):
     global TimeToHold
     global ScriptSettings
     global PeopleWhoHaveHeldThePotato
+    global ScriptSettings
     
     if data.IsChatMessage() and data.GetParam(0).lower() == ScriptSettings.Command and Parent.IsOnCooldown(ScriptName,ScriptSettings.Command):
         SendMessage(data, "The potato is still warming up! Come back in " + str(Parent.GetCooldownDuration(ScriptName,ScriptSettings.Command)) + " seconds!")
         return
 
-    
-    #Parent.SendStreamMessage(ScriptSettings.Command)
-    if data.GetParam(0).lower() != ScriptSettings.Command and data.GetParam(0).lower() != "!heatuppotato":
-        return
-    
     if data.GetParamCount() != 2:
-        SendMessage(data, "To use !hotpotato, please provide a username to throw the potato to.")
+        SendMessage(data, "To use" + ScriptSettings.Command + ", please provide a username to throw the potato to.")
         return
     
     targetUser = data.GetParam(1)
@@ -95,7 +90,7 @@ def Execute(data):
         SendMessage(data, "You can't throw the potato to yourself, silly!")
         return
 
-    if targetUser.lower() == "solsticeshard" or targetUser.lower() == "bottkomplex":
+    if targetUser.lower() == ScriptSettings.StreamerUsername.lower() or targetUser.lower() == ScriptSettings.BotUsername.lower():
         SendMessage(data, "No throwing the potato to the streamer or a bot, silly.")
         return    
 
@@ -109,7 +104,7 @@ def Execute(data):
         GameStartTime = datetime.now()
         GameEndTime = datetime.now() + timedelta(minutes=5)
         PotatoHolder = targetUser
-        TimeToHold = 300
+        TimeToHold = ScriptSettings.SecondsToHold
         PeopleWhoHaveHeldThePotato = [data.User, targetUser]
         SendMessage(data, "The potato is in the air! It's in your hands, " + targetUser + "!")
         return
@@ -117,22 +112,12 @@ def Execute(data):
     if data.User.lower() != PotatoHolder.lower():
         SendMessage(data, "The potato is in someone else's hands, " + data.User)
         return
-
-    if data.GetParam(0).lower() == "!heatuppotato":
-        if TimeToHold > 10:
-            TimeToHold -= 10
-
-        GameEndTime = GameEndTime - timedelta(seconds = 10)
-        timeDifference = GameEndTime - datetime.now()
-        SendMessage(data, data.User + " warmed up the potato! You only have " + str(timeDifference.seconds) + " seconds to throw it!")
-        return
-        
     
     if data.User.lower() not in map(str.lower, PeopleWhoHaveHeldThePotato):
         PeopleWhoHaveHeldThePotato.append(data.User.lower())
     PotatoHolder = targetUser.lower()
-    if TimeToHold > 10:
-        TimeToHold -= 10
+    if TimeToHold > ScriptSettings.TimeDecrement:
+        TimeToHold -= ScriptSettings.TimeDecrement
     GameEndTime = datetime.now() + timedelta(seconds = TimeToHold)
     SendMessage(data, data.User + " throws the potato to " + targetUser + "! They only have " + str(TimeToHold) + " seconds to throw it!")
 

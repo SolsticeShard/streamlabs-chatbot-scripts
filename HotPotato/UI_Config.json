@@ -7,6 +7,34 @@
       "tooltip": "The command that will be responded to.",
       "group": "Core"
     },
+    "StreamerUsername":{
+      "type": "textbox",
+      "value": "",
+      "label": "StreamerUsername",
+      "tooltip": "The streamer's username. Leave blank if you want people to be able to throw the potato to you!",
+      "group": "Core"
+    },
+    "BotUsername":{
+      "type": "textbox",
+      "value": "",
+      "label": "BotUsername",
+      "tooltip": "The bot's username. If this is not filled out, people can throw the potato to your bot.",
+      "group": "Core"
+    },
+    "SecondsToHold":{
+      "type": "numberbox",
+      "value": 300,
+      "label": "SecondsToHold",
+      "tooltip": "How many seconds the first player has to hold the potato.",
+      "group": "Core"
+    },
+    "TimeDecrement":{
+      "type": "numberbox",
+      "value": 10,
+      "label": "TimeDecrement",
+      "tooltip": "How many seconds each consecutive toss subtracts from the timer. Setting to 0 will cause the game to not speed up.",
+      "group": "Core"
+    },
     "Permission": {
       "type": "dropdown",
       "value": "everyone",
