@@ -4,8 +4,6 @@
 import os
 import sys
 import json
-import subprocess
-import webbrowser
 import math
 from datetime import datetime, timedelta
 
