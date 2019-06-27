@@ -8,5 +8,6 @@
   "MaxPlayers": 2,
   "MinimumBet": 5,
   "MaximumBet": 50,
-  "MaximumPlayers": 4
+  "MaximumPlayers": 4,
+  "TurnTimeout": 5
 };

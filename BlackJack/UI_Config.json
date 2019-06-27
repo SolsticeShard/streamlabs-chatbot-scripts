@@ -20,5 +20,12 @@
       "value": 5,
       "tooltip": "Maximum players that can participate in a game",
       "group": "Core"
+    },
+    "TurnTimeout": {
+      "type": "numberbox",
+      "label": "Turn timeout",
+      "value": 300,
+      "tooltip": "The amount of time, in seconds, before a player is kicked for inactivity. 0 will remove the timeout",
+      "group": "Core"
     }
   }

@@ -2,5 +2,7 @@
   "Command": "!hotpotato",
   "Permission": "everyone",
   "Info": "woop",
-  "Cooldown": 28
+  "Cooldown": 28,
+  "StreamerUsername": "SolsticeShard",
+  "BotUsername": "bottkomplex"
 }

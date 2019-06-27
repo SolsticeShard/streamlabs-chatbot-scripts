@@ -15,7 +15,7 @@ sys.path.append(os.path.join(os.path.dirname(__file__), "lib")) #point at lib fo
 #clr.AddReference("IronPython.Modules.dll")
 
 #   Import your Settings class
-from Settings_Module import MySettings
+from Mafia_Settings_Module import MafiaSettings
 
 #---------------------------
 #   [Required] Script Information
@@ -32,7 +32,7 @@ Version = "1.0.0.0"
 global SettingsFile
 SettingsFile = ""
 global ScriptSettings
-ScriptSettings = MySettings()
+ScriptSettings = MafiaSettings()
 global TestMessage
 TestMessage = ""
 
@@ -97,8 +97,7 @@ def Init():
 
     #   Load settings
     SettingsFile = os.path.join(os.path.dirname(__file__), "Settings\settings.json")
-    ScriptSettings = MySettings(SettingsFile)
-    ScriptSettings.Response = "Overwritten pong! ^_^"
+    ScriptSettings = MafiaSettings(SettingsFile)
     return
 
 #---------------------------

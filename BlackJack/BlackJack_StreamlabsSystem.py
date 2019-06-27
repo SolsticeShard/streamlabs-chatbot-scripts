@@ -12,7 +12,7 @@ sys.path.append(os.path.join(os.path.dirname(__file__), "lib")) #point at lib fo
 
 
 #   Import your Settings class
-from Settings_Module import MySettings
+from BlackJack_Settings_Module import BlackJackSettings
 #---------------------------
 #   [Required] Script Information
 #---------------------------
@@ -71,7 +71,7 @@ class Card:
 global SettingsFile
 SettingsFile = ""
 global ScriptSettings
-ScriptSettings = MySettings()
+ScriptSettings = BlackJackSettings()
 
 global GameIsRunning
 GameIsRunning = False
@@ -94,6 +94,8 @@ Bets = {}
 global PlayersInQueue
 PlayersInQueue = []
 
+global TurnEndTime
+TurnEndTime = datetime.now()
 #---------------------------
 #   [Required] Initialize Data (Only called on load)
 #---------------------------
@@ -106,7 +108,7 @@ def Init():
 
     #   Load settings
     SettingsFile = os.path.join(os.path.dirname(__file__), "Settings\settings.json")
-    ScriptSettings = MySettings(SettingsFile)
+    ScriptSettings = BlackJackSettings(SettingsFile)
     ScriptSettings.Command = "!blackjack"
     return
 
@@ -122,6 +124,7 @@ def Execute(data):
     global PlayersInQueue
     global DoubledDownCards
     global ScriptSettings
+    global TurnEndTime
 
     if data.GetParam(0).lower() != ScriptSettings.Command:
         return
@@ -158,7 +161,7 @@ def Execute(data):
             Parent.SendTwitchMessage(data.User + ", you have to declare a bet when starting a hand of blackjack between " + str(ScriptSettings.MinimumBet) + " and " + str(ScriptSettings.MaximumBet))
             return
         try:
-            bet = int(data.GetParam(1))            
+            bet = int(data.GetParam(1))
         except ValueError:
             Parent.SendTwitchMessage(data.User + ", your bet must be an integer value.")
             return
@@ -166,7 +169,7 @@ def Execute(data):
             Parent.SendTwitchMessage(data.User + ", your bet must be between " + str(ScriptSettings.MinimumBet) + " and " + str(ScriptSettings.MaximumBet))
             return
         if Parent.GetPoints(data.User) < bet:
-            Parent.SendTwitchMessage(data.User + ", you do not have " + str(bet) + " points to be, sorry!")
+            Parent.SendTwitchMessage(data.User + ", you do not have " + str(bet) + " points to bet, sorry!")
             return
         GameIsRunning = True
         StartQueue(data.User, bet)
@@ -198,6 +201,7 @@ def Execute(data):
         return
     #player actions
     if data.GetParam(1).lower() == 'stand':
+        TurnEndTime = datetime.now() + timedelta(seconds = ScriptSettings.TurnTimeout)
         Parent.SendTwitchMessage(data.User + " stands with " + str(EvaluateHand(data.User)) + " points.")
         index = PlayersInQueue.index(ActingPlayer)
         if index == len(PlayersInQueue) - 1:
@@ -205,9 +209,11 @@ def Execute(data):
         else:
             ActingPlayer = PlayersInQueue[index+1]
             Parent.SendTwitchMessage(ActingPlayer + ", it is now your turn.")
+            TurnEndTime = datetime.now() + timedelta(seconds = ScriptSettings.TurnTimeout)
         return
 
     if data.GetParam(1).lower() == 'doubledown':
+        TurnEndTime = datetime.now() + timedelta(seconds = ScriptSettings.TurnTimeout)
         if not CanDoubleDown(data.User):
             Parent.SendTwitchMessage("You can only double down if your original two cards total 9, 10, or 11.")
             return
@@ -224,6 +230,7 @@ def Execute(data):
         return
 
     if data.GetParam(1).lower() == 'hit':
+        TurnEndTime = datetime.now() + timedelta(seconds = ScriptSettings.TurnTimeout)
         if Hit(ActingPlayer):
             index = PlayersInQueue.index(ActingPlayer)
             Parent.SendTwitchMessage("You bust! Sorry, you lose " + str(Bets[data.User]) + " points :(.")
@@ -247,7 +254,24 @@ def SendMessage(data, msg):
 #   [Required] Tick method (Gets called during every iteration even when there is no incoming data)
 #---------------------------
 def Tick():
-        
+    global GameIsRunning
+    global ActingPlayer
+    global TurnEndTime
+    global PlayersInQueue
+    global Hands
+
+    if ScriptSettings.TurnTimeout > 0 and GameIsRunning and len(Hands) > 0 and datetime.now() > TurnEndTime:
+        index = PlayersInQueue.index(ActingPlayer)
+        player_to_remove = ActingPlayer
+        ActingPlayer = None
+        Parent.SendTwitchMessage("Sorry " + player_to_remove + ", you took too long on your turn.")
+        RemovePlayer(player_to_remove)
+        if index == len(PlayersInQueue):
+            TakeDealerTurn()
+        else:
+            ActingPlayer = PlayersInQueue[index]
+            Parent.SendTwitchMesssage(ActingPlayer + ", it is now your turn.")
+
     return
 
 def TakeDealerTurn():
@@ -381,6 +405,8 @@ def StartGame():
     global DoubledDownCards
     global ActingPlayer
     global GameIsRunning
+    global TurnEndTime
+    global ScriptSettings
 
     Hands = {}
     DoubledDownCards = {}
@@ -409,6 +435,7 @@ def StartGame():
     Parent.SendTwitchMessage('Use "!blackjack cards" to read your cards, "!blackjack dealer" for the dealer''s cards, or "!blackjack turn" for whose turn it is.')
     ActingPlayer = PlayersInQueue[0]
     Parent.SendTwitchMessage(ActingPlayer + ', it''s your turn. Your options: "!blackjack hit", "!blackjack stand", "!blackjack doubledown". (split and insurance will be implemented later)')
+    TurnEndTime = datetime.now() + timedelta(seconds = ScriptSettings.TurnTimeout)
     return
 
 def CheckNaturals():

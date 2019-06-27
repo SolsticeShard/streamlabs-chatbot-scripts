@@ -4,6 +4,7 @@ import os
 from threading import Thread
 import importlib
 import importlib.util
+
 from time import sleep
 
 
@@ -28,28 +29,28 @@ class Parent:
 
     def AddPoints(self, user, amount):
         if user not in self.Points:
-            self.Points[user] = amount
+            self.Points[user.lower()] = amount
         else:
-            self.Points[user] = self.Points[user] + amount
+            self.Points[user.lower.lower()] = self.Points[user] + amount
 
         #TODO: check active viewer
         return True
 
     def AddPointsAll(self, data):
         for user in data:
-            self.AddPoints(user, data[user])
+            self.AddPoints(user.lower(), data[user])
         return []
 
     def RemovePointsAll(self, data):
         for user in data:
-            self.RemovePoints(user, data[user])
+            self.RemovePoints(user.lower(), data[user])
         return []
 
     def RemovePoints(self, user, amount):
-        if user not in self.Points:
-            self.Points[user] = -amount
+        if user.lower() not in self.Points:
+            self.Points[user.lower()] = -amount
         else:
-            self.Points[user] = self.Points[user] - amount
+            self.Points[user.lower()] = self.Points[user.lower()] - amount
         
         return true
 
@@ -60,11 +61,15 @@ class Parent:
         print("bot >> " + user + ": " + message)
 
     def GetPoints(self, user):
-        if user not in self.Points:
-            self.Points[user] = 0
+        if user.lower() not in self.Points:
+            self.Points[user.lower()] = 0
             return 0
         else:
-            return self.Points[user]
+            return self.Points[user.lower()]
+
+    def IsOnCooldown(self, ScriptName, CommandName):
+        #TODO: implement
+        return False
 
 '''
 This class simulates the Data object passed into the script.
@@ -122,7 +127,8 @@ current_user = 'SolsticeShard'
 command = ''
 exec_funcs = []
 parent = Parent()
-starting_path = os.path.dirname(__file__)
+starting_path = os.path.dirname(os.path.abspath(__file__))
+
 
 for folder in os.listdir(starting_path):
     if os.path.isdir(os.path.join(starting_path, folder)):
@@ -139,7 +145,7 @@ for folder in os.listdir(starting_path):
                 thread.start()
                 print("META: Loaded script " + module_name)
 
-while command != 'quit':
+while command != '!quit':
     command = GetInput(current_user)
     args = command.split(" ")
     if args[0] == '!import':
@@ -153,7 +159,7 @@ while command != 'quit':
         print("META: Changed user to " + current_user)
         continue
     if args[0] == '!setpoints':
-        Mafia_StreamlabsSystem.Parent.Points[args[1]] = int(args[2])
+        parent.Points[args[1].lower()] = int(args[2])
         print("META: Set user " + str(args[1]) + " to " + str(args[2]) + " points.")
     else:
         if args[0] == '/w':

@@ -2,7 +2,7 @@ import os
 import codecs
 import json
 
-class MySettings(object):
+class BlackJackSettings(object):
 	def __init__(self, settingsfile=None):
 		try:
 			with codecs.open(settingsfile, encoding="utf-8-sig", mode="r") as f:
@@ -12,6 +12,10 @@ class MySettings(object):
 			self.Cooldown = 10
 			self.Permission = "everyone"
 			self.Info = ""
+			self.TurnTimeout = 300
+			self.MaximumBet = 100
+			self.MinimumBet = 10
+			self.MaximumPlayers = 5
 
 	def Reload(self, jsondata):
 		self.__dict__ = json.loads(jsondata, encoding="utf-8")

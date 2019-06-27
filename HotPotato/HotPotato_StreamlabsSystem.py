@@ -10,7 +10,7 @@ from datetime import datetime, timedelta
 sys.path.append(os.path.join(os.path.dirname(__file__), "lib")) #point at lib folder for classes / references
 
 #   Import your Settings class
-from Settings_Module import MySettings
+from HotPotato_Settings_Module import HotPotatoSettings
 #---------------------------
 #   [Required] Script Information
 #---------------------------
@@ -26,7 +26,7 @@ Version = "1.0.0.0"
 global SettingsFile
 SettingsFile = ""
 global ScriptSettings
-ScriptSettings = MySettings()
+ScriptSettings = HotPotatoSettings()
 
 global GameIsRunning
 GameIsRunning = False
@@ -58,7 +58,7 @@ def Init():
 
     #   Load settings
     SettingsFile = os.path.join(os.path.dirname(__file__), "Settings\settings.json")
-    ScriptSettings = MySettings(SettingsFile)
+    ScriptSettings = HotPotatoSettings(SettingsFile)
     
     return
 
@@ -74,7 +74,10 @@ def Execute(data):
     global ScriptSettings
     global PeopleWhoHaveHeldThePotato
     global ScriptSettings
-    
+
+    if data.GetParam(0).lower() != ScriptSettings.Command:
+        return
+
     if data.IsChatMessage() and data.GetParam(0).lower() == ScriptSettings.Command and Parent.IsOnCooldown(ScriptName,ScriptSettings.Command):
         SendMessage(data, "The potato is still warming up! Come back in " + str(Parent.GetCooldownDuration(ScriptName,ScriptSettings.Command)) + " seconds!")
         return
